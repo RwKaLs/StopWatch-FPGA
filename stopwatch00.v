@@ -1,35 +1,35 @@
-module stopwatch00(input btn,
-             input clk,
-             input save,
-             input outres,
-             output reg led,
-             output reg ledr,
-             output reg ledg,
-             output reg ledb,
-             output reg [8:0] leds,  // to be off
-             output reg [11:0]ledsindicates,
-             output reg [7:0] cs,
-             output reg [7:0] ds,
-             output reg [7:0] s,
-             output reg [7:0] ss,
-             output reg [7:0] m,
-             output reg [7:0] mm);
-reg btn_f = 0;
-reg save_f = 0;
-reg btn_is_stop = 0;
-integer i = 0;
-integer ledind = 0;
-integer step = 1;
-reg [10:0] index = 0;
-reg [10:0] showindex = 0;
-reg [31:0] ticks;
-reg [7:0] csecs = 0;
-reg [7:0] secs = 0;
-reg [7:0] mins = 0;
-reg [7:0] numbers [9:0];
-reg [7:0] numbersdot [9:0];
-reg [7:0] results [9:0][5:0];
-
+module stopwatch00(input btn, // start/stop btn
+             input clk,			// 50 MHz clock oscillator
+             input save,		// saveCycle/showResult/Reset btn
+             input outres,		// showResult mode switch
+             output reg led,	// pipka
+             output reg ledr,	// statusLight RGB red
+             output reg ledg,	// statusLight RGB green
+             output reg ledb,	// statusLight RGB blue
+             output reg [8:0] leds,  // turn off all unused lights
+             output reg [11:0]ledsindicates,	// chain of extended lights
+             output reg [7:0] cs,	// on-display centiseconds
+             output reg [7:0] ds,	// on-display deciseconds
+             output reg [7:0] s,		// on-display seconds
+             output reg [7:0] ss,	// on-display decaseconds
+             output reg [7:0] m,		// on-display minutes
+             output reg [7:0] mm);	// on-display decaminutes
+reg btn_f = 0; 		// start/stop btn flag
+reg save_f = 0; 		// save btn flag
+reg btn_is_stop = 0;	// start/stop btn flag : 1 - pressed; 0 -released
+integer i = 0;			// cycles variable
+integer ledind = 0;	// index of current ledindicator
+integer step = 1;		// direction of led indicators flow
+reg [10:0] index = 0;	// index of last saved value
+reg [10:0] showindex = 0;	// index of a current showing value (from results)
+reg [31:0] ticks;	// ticks counter (each clock posedge)
+reg [7:0] csecs = 0;	// centiseconds counter
+reg [7:0] secs = 0;	// seconds counter
+reg [7:0] mins = 0;	// minutes counter
+reg [7:0] numbers [9:0];	// array of numbers for 7-digit display
+reg [7:0] numbersdot [9:0];	// array of numbers for 7-digit display with dots (for mins and secs)
+reg [7:0] results [9:0][5:0];	// array of results for saving
+// initialization of all main project vars
 initial begin
   numbers[0] = 8'b11000000;
   numbers[1] = 8'b11111001;
