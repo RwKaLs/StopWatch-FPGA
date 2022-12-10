@@ -1,0 +1,71 @@
+module stopwatch00(input btn, 
+						 input clk, 
+						 output reg led
+						 output reg [7:0] cs;
+						 output reg [7:0] ds;
+						 output reg [7:0] s;
+						 output reg [7:0] ss;
+						 output reg [7:0] m;
+						 output reg [7:0] mm;);
+reg btn_f = 0;
+reg ticks = 0;
+reg csecs = 0;
+reg secs = 0;
+reg mins = 0;
+reg [9:0] numbers [0:7];
+numbers[0] = 8'b11111100;
+numbers[1] = 8'b01100000;
+numbers[2] = 8'b1111010;
+numbers[3] = 8'b11110010;
+numbers[4] = 8'b01100110;
+numbers[5] = 8'b10110110;
+numbers[6] = 8'b10111110;
+numbers[7] = 8'b11100000;
+numbers[8] = 8'b11111110;
+numbers[9] = 8'b11110110;
+always@(posedge clk)
+	begin
+		if (ticks == 500000)
+			ticks = 0;
+		else
+			ticks += 1;
+	end
+always@(ticks)
+	begin
+		if (csecs == 99)
+			begin
+				csecs = 0;
+				if (secs == 59)
+					begin
+						secs = 0;
+						mins += 1;
+					end
+				else
+					secs += 1;
+			end
+		else
+			csecs += 1;
+	end
+always@(btn)
+	begin
+	if (btn == 1 &&  btn_f == 0)
+		begin
+			led = ~led;
+			btn_f = 1;
+		end
+	else if (btn == 0 && btn_f == 1)
+		btn_f = 0;
+	end
+always@(csecs)
+	begin
+		cs = numbers[csecs % 10];
+		ds = numbers[csecs / 10];
+		s = numbers[secs % 10];
+		s[7] = 1;
+		ss = numbers[secs / 10];
+		m = numbers[mins % 10];
+		m[7] = 1;
+		mm = numbers[mins / 10];
+	end
+endmodule
+	
